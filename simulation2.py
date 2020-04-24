@@ -14,12 +14,24 @@ COLOURS = itertools.cycle([RED, BLUE])
 windowSize = (800, 800)
 
 def main():
-    global SCREEN, CLOCK
+    def pause():
+        paused = True
+        while paused:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c: #if c pressed, Continue playing
+                        paused = False
+            pygame.display.update()
+            clock.tick(5)
+    
     pygame.init()
     pygame.display.set_caption('Random Walk')
-    SCREEN = pygame.display.set_mode(windowSize)
-    CLOCK = pygame.time.Clock()
-    SCREEN.fill(GREY) #background
+    screen = pygame.display.set_mode(windowSize)
+    clock = pygame.time.Clock()
+    screen.fill(GREY) #background
 
     #start in the middle of the grid
     currentPosition = [windowSize[0]//2, windowSize[1]//2 ]
@@ -28,21 +40,27 @@ def main():
     arrow = pygame.image.load("images/arrow.png")
     arrow = pygame.transform.scale(arrow, (10, 10))
     arrowX, arrowY = currentPosition #tuple unpacking
-    arrowSize = arrow.get_size()
-    #pygame.draw.circle(SCREEN, BLACK, currentPosition, 6)
     
     myriadProFont = pygame.font.SysFont("Myriad Pro", 48)
 
-    drawGrid()
-    currentGridScreen = SCREEN.copy()
+    #Draw Grid and copy to current grid screen
+    BLOCKSIZE = 40 #Set the size of the grid block - should be evenly divisible by window size
+    for x in range(windowSize[0]):
+        for y in range(windowSize[1]):
+            rect = pygame.Rect(x * BLOCKSIZE, y * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE)
+            pygame.draw.rect(screen, WHITE, rect, 1)
+    currentGridScreen = screen.copy()
 
     while True:
-        CLOCK.tick(5)
+        clock.tick(5)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    pause()
 
         #Generate the dice pair
         die1 = random.randint(1, 6)
@@ -52,7 +70,6 @@ def main():
         diceText = "Horizontal: %s, Vertical: %s" % (die1, die2)
         diceMessage = myriadProFont.render(diceText, 1, PINK, WHITE)
         diceMessageSize = diceMessage.get_size()
-        SCREEN.blit(diceMessage, (windowSize[0]//2 - diceMessageSize[0]//2 , 0))
  
         #Horizontal line
         if die1 <= 3:
@@ -69,12 +86,13 @@ def main():
             newPosition[0] = windowSize[0]
             arrowX = windowSize[0]
         
-        SCREEN.fill(GREY)
-        SCREEN.blit(currentGridScreen, (0, 0))
-        pygame.draw.line(SCREEN, next(COLOURS), currentPosition, newPosition, 2)
-        currentGridScreen = SCREEN.copy()
-        SCREEN.blit(arrow, (arrowX, arrowY))
-        pygame.draw.line(SCREEN, next(COLOURS), currentPosition, newPosition, 2)
+        screen.fill(GREY)
+        screen.blit(currentGridScreen, (0, 0))
+        pygame.draw.line(screen, next(COLOURS), currentPosition, newPosition, 2)
+        screen.blit(diceMessage, (windowSize[0]//2 - diceMessageSize[0]//2 , 0))
+        currentGridScreen = screen.copy()
+        screen.blit(arrow, (arrowX, arrowY))
+        pygame.draw.line(screen, next(COLOURS), currentPosition, newPosition, 2)
         currentPosition = newPosition[:]
         pygame.display.update()
         
@@ -94,21 +112,14 @@ def main():
             newPosition[1] = windowSize[1]
             arrowY = windowSize[1]
         
-        SCREEN.fill(GREY)
-        SCREEN.blit(currentGridScreen, (0, 0))
-        pygame.draw.line(SCREEN, next(COLOURS), currentPosition, newPosition, 2)
-        currentGridScreen = SCREEN.copy()
-        SCREEN.blit(arrow, (arrowX, arrowY))
+        screen.fill(GREY)
+        screen.blit(currentGridScreen, (0, 0))
+        pygame.draw.line(screen, next(COLOURS), currentPosition, newPosition, 2)
+        screen.blit(diceMessage, (windowSize[0]//2 - diceMessageSize[0]//2 , 0))
+        currentGridScreen = screen.copy()
+        screen.blit(arrow, (arrowX, arrowY))
         currentPosition = newPosition[:]
         pygame.display.update()
-
-def drawGrid():
-    global BLOCKSIZE
-    BLOCKSIZE = 40 #Set the size of the grid block - should be evenly divisible by window size
-    for x in range(windowSize[0]):
-        for y in range(windowSize[1]):
-            rect = pygame.Rect(x * BLOCKSIZE, y * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE)
-            pygame.draw.rect(SCREEN, WHITE, rect, 1)
 
 if __name__ == "__main__":
     main()

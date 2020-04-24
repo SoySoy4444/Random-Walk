@@ -2,19 +2,33 @@ import pygame, sys, random, itertools
 BLACK = (0, 0, 0)
 GREY = (220, 220, 200) #Background
 WHITE = (255, 255, 255) #Grid lines, dice text message background
-PINK = (255, 0, 255) #Dice text message
-
-#Lines
+PINK = (255, 0, 255) #Dice text messages
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
-#COLOURS = itertools.cycle([RED, GREEN, BLUE])
-COLOURS = itertools.cycle([RED, BLUE])
+BROWN= (150, 75, 0)
+YELLOW = (255, 255, 0)
+ORANGE = (255, 165, 0)
+LIGHTBLUE = (173, 216, 230)
+LIGHTGREEN = (144, 238, 144)
 
 windowSize = (800, 800)
 
 def main():
-    framesPerSecond = 10
+    colourSchemes = [
+        itertools.cycle([RED, BLUE]), 
+        itertools.cycle([GREEN, RED, BLUE]),
+        itertools.cycle([RED, BROWN]),
+        itertools.cycle([BLACK, YELLOW]),
+        itertools.cycle([GREEN, ORANGE]),
+        itertools.cycle([YELLOW, BLUE]),
+        itertools.cycle([BLUE, PINK]),
+        itertools.cycle([LIGHTGREEN, LIGHTBLUE, GREEN]),
+        itertools.cycle([LIGHTBLUE, ORANGE]),
+    ]
+    COLOURS = colourSchemes[0] #default colour
+    framesPerSecond = 5 #default speed
+    
     def pause():
         paused = True
         while paused:
@@ -66,14 +80,31 @@ def main():
                     framesPerSecond += 1
                 elif event.key == pygame.K_DOWN:
                     framesPerSecond -= 1
-
+                elif event.key == pygame.K_1:
+                    COLOURS = colourSchemes[0]
+                elif event.key == pygame.K_2:
+                    COLOURS = colourSchemes[1]
+                elif event.key == pygame.K_3:
+                    COLOURS = colourSchemes[2]
+                elif event.key == pygame.K_4:
+                    COLOURS = colourSchemes[3]
+                elif event.key == pygame.K_5:
+                    COLOURS = colourSchemes[4]
+                elif event.key == pygame.K_6:
+                    COLOURS = colourSchemes[5]
+                elif event.key == pygame.K_7:
+                    COLOURS = colourSchemes[6]
+                elif event.key == pygame.K_8:
+                    COLOURS = colourSchemes[7]
+                elif event.key == pygame.K_9:
+                    COLOURS = colourSchemes[8]
         #Generate the dice pair
         die1 = random.randint(1, 6)
         die2 = random.randint(1, 6)
 
         #Load the dice message
         diceText = "Horizontal: %s, Vertical: %s" % (die1, die2)
-        diceMessage = myriadProFont.render(diceText, 1, PINK, WHITE)
+        diceMessage = myriadProFont.render(diceText, 1, BLACK, WHITE)
         diceMessageSize = diceMessage.get_size()
  
         #Horizontal line
@@ -97,7 +128,6 @@ def main():
         screen.blit(diceMessage, (windowSize[0]//2 - diceMessageSize[0]//2 , 0))
         currentGridScreen = screen.copy()
         screen.blit(arrow, (arrowX, arrowY))
-        pygame.draw.line(screen, next(COLOURS), currentPosition, newPosition, 2)
         currentPosition = newPosition[:]
         pygame.display.update()
         

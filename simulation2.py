@@ -14,6 +14,7 @@ COLOURS = itertools.cycle([RED, BLUE])
 windowSize = (800, 800)
 
 def main():
+    framesPerSecond = 10
     def pause():
         paused = True
         while paused:
@@ -52,7 +53,7 @@ def main():
     currentGridScreen = screen.copy()
 
     while True:
-        clock.tick(5)
+        clock.tick(framesPerSecond)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -61,6 +62,10 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pause()
+                elif event.key == pygame.K_UP:
+                    framesPerSecond += 1
+                elif event.key == pygame.K_DOWN:
+                    framesPerSecond -= 1
 
         #Generate the dice pair
         die1 = random.randint(1, 6)

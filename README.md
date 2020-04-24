@@ -11,3 +11,5 @@ A short Mac app of a random walk simulation.
  
  Press the up arrow to speed up
  Press the down arrow to slow down
+
+Use the keys 1 - 9 to change the colour scheme.

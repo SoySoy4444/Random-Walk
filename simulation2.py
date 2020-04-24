@@ -52,7 +52,7 @@ def main():
     currentPosition = [windowSize[0]//2, windowSize[1]//2 ]
     newPosition = currentPosition[:]
 
-    arrow = pygame.image.load("images/arrow.png")
+    arrow = pygame.image.load("arrow.png")
     arrow = pygame.transform.scale(arrow, (10, 10))
     arrowX, arrowY = currentPosition #tuple unpacking
     
@@ -79,7 +79,8 @@ def main():
                 elif event.key == pygame.K_UP:
                     framesPerSecond += 1
                 elif event.key == pygame.K_DOWN:
-                    framesPerSecond -= 1
+                    if framesPerSecond != 1: #FPS cannot be 0 or negative.
+                        framesPerSecond -= 1
                 elif event.key == pygame.K_1:
                     COLOURS = colourSchemes[0]
                 elif event.key == pygame.K_2:
@@ -131,6 +132,7 @@ def main():
         currentPosition = newPosition[:]
         pygame.display.update()
         
+        clock.tick(framesPerSecond)
         #Vertical line
         if die2 <= 3:
             newPosition[1] -= BLOCKSIZE

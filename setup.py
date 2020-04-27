@@ -11,8 +11,8 @@ OPTIONS = {
      'CFBundleName': 'Random Walk',
      'CFBundleDisplayName': 'Random Walk',
      'CFBundleGetInfoString': "A simulation of a random walk",
-     'CFBundleVersion': "1.0.2",
-     'CFBundleShortVersionString': "1.0.2",
+     'CFBundleVersion': "1.0.3",
+     'CFBundleShortVersionString': "1.0.3",
      'NSHumanReadableCopyright': 'SoySoy4444 © 2020. All Rights Reserved.'
      }
 }

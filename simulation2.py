@@ -28,6 +28,7 @@ def main():
     ]
     COLOURS = colourSchemes[0] #default colour
     framesPerSecond = 5 #default speed
+    BLOCKSIZE = 40 #default grid size
     
     def pause():
         paused = True
@@ -39,32 +40,42 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_c: #if c pressed, Continue playing
                         paused = False
+                    elif event.key == pygame.K_r: #reset
+                        reset()
+                        paused = False
             pygame.display.update()
             clock.tick(5)
     
+    def drawGrid(blockSize):
+        screen.fill(GREY) #background
+        blockSize = 40 #Set the size of the grid block - should be evenly divisible by window size
+        for x in range(windowSize[0]):
+                for y in range(windowSize[1]):
+                    rect = pygame.Rect(x * BLOCKSIZE, y * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE)
+                    pygame.draw.rect(screen, WHITE, rect, 1)
+        return screen.copy()
+        
+    def reset(blockSize):
+        currentGridScreen = drawGrid(blockSize) #draw initial grid
+        
+        currentPosition = [windowSize[0]//2, windowSize[1]//2 ]
+        newPosition = currentPosition[:]
+        
+        arrowX, arrowY = currentPosition #tuple unpacking
+        
+        return (currentGridScreen, currentPosition, newPosition, arrowX, arrowY)
+
     pygame.init()
     pygame.display.set_caption('Random Walk')
     screen = pygame.display.set_mode(windowSize)
     clock = pygame.time.Clock()
-    screen.fill(GREY) #background
-
-    #start in the middle of the grid
-    currentPosition = [windowSize[0]//2, windowSize[1]//2 ]
-    newPosition = currentPosition[:]
 
     arrow = pygame.image.load("arrow.png")
     arrow = pygame.transform.scale(arrow, (10, 10))
-    arrowX, arrowY = currentPosition #tuple unpacking
     
     myriadProFont = pygame.font.SysFont("Myriad Pro", 48)
 
-    #Draw Grid and copy to current grid screen
-    BLOCKSIZE = 40 #Set the size of the grid block - should be evenly divisible by window size
-    for x in range(windowSize[0]):
-        for y in range(windowSize[1]):
-            rect = pygame.Rect(x * BLOCKSIZE, y * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE)
-            pygame.draw.rect(screen, WHITE, rect, 1)
-    currentGridScreen = screen.copy()
+    currentGridScreen, currentPosition, newPosition, arrowX, arrowY = reset(BLOCKSIZE)
 
     while True:
         clock.tick(framesPerSecond)
@@ -74,11 +85,13 @@ def main():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
+                if event.key == pygame.K_p: #pause
                     pause()
-                elif event.key == pygame.K_UP:
+                elif event.key == pygame.K_r: #reset
+                    currentGridScreen, currentPosition, newPosition, arrowX, arrowY = reset(BLOCKSIZE)
+                elif event.key == pygame.K_UP: #speed up
                     framesPerSecond += 1
-                elif event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN: #slow down
                     if framesPerSecond != 1: #FPS cannot be 0 or negative.
                         framesPerSecond -= 1
                 elif event.key == pygame.K_1:
